@@ -60,8 +60,9 @@ const SingaporeHDBMapCircles: React.FC = () => {
   // Use any Singapore map image URL here
   //https://comersis.com/c-images/SG/Map-of-Singapore-b.jpg
   // const mapImageUrl = "https://fvmstatic.s3.amazonaws.com/maps/m/SG-EPS-01-0001.png";
-  const mapImageUrl = "https://comersis.com/c-images/SG/Map-of-Singapore-b.jpg";
-
+  // const mapImageUrl = "https://comersis.com/c-images/SG/Map-of-Singapore-b.jpg";
+  // const mapImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Town_Councils_map_of_Singapore_2020.svg/2560px-Town_Councils_map_of_Singapore_2020.svg.png"
+  const mapImageUrl = "/images/Map-of-Singapore-b-edited.jpg"
   const circleRadius = 2; // Fixed size for all circles
 
   return (
@@ -70,26 +71,8 @@ const SingaporeHDBMapCircles: React.FC = () => {
         Singapore HDB Town Distribution
       </h2>
       <p className="text-center text-gray-500 text-sm mb-4">
-        Percentage of HDB flats by planning area
+        AVG psf price by town
       </p>
-
-      {/* Legend */}
-      <div className="flex items-center justify-center gap-1 mb-4 flex-wrap">
-        <span className="text-xs text-gray-600 mr-1">0%</span>
-        {[0.2, 1, 2, 3, 4, 5, 6, 7, 8].map((val) => (
-          <div
-            key={val}
-            className="w-6 h-5 flex items-center justify-center text-[8px] font-medium rounded"
-            style={{
-              backgroundColor: getColor(val),
-              color: val >= 6 ? "#fff" : "#1f2937",
-            }}
-          >
-            {val}
-          </div>
-        ))}
-        <span className="text-xs text-gray-600 ml-1">8%+</span>
-      </div>
 
       {/* Map Container */}
       <div className="relative rounded-lg overflow-hidden border border-gray-200">
