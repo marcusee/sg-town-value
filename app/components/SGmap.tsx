@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import OneMap from "./OneMap";
 
 interface TownData {
   id: string;
@@ -78,12 +79,12 @@ const SingaporeHDBMapCircles: React.FC = () => {
       <div className="relative rounded-lg overflow-hidden border border-gray-200">
         {/* Background Map Image */}
         <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
-          <img
+          {/* <img
             src={mapImageUrl}
             alt="Singapore Map"
             className="w-full h-full obcject-cover"
-          />
-
+          /> */}
+          <OneMap />
           {/* SVG Overlay for circles */}
           <svg
             viewBox="0 0 100 56.25"
