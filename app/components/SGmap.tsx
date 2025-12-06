@@ -58,14 +58,6 @@ const getColor = (percentage: number): string => {
 const SingaporeHDBMapCircles: React.FC = () => {
   const [hoveredTown, setHoveredTown] = useState<TownData | null>(null);
 
-  // Use any Singapore map image URL here
-  //https://comersis.com/c-images/SG/Map-of-Singapore-b.jpg
-  // const mapImageUrl = "https://fvmstatic.s3.amazonaws.com/maps/m/SG-EPS-01-0001.png";
-  // const mapImageUrl = "https://comersis.com/c-images/SG/Map-of-Singapore-b.jpg";
-  // const mapImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Town_Councils_map_of_Singapore_2020.svg/2560px-Town_Councils_map_of_Singapore_2020.svg.png"
-  const mapImageUrl = "/images/Map-of-Singapore-b-edited.jpg"
-  const circleRadius = 2; // Fixed size for all circles
-
   return (
     <div className="w-full max-w-6xl mx-auto p-4 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold text-center mb-2 text-gray-800">
@@ -86,56 +78,7 @@ const SingaporeHDBMapCircles: React.FC = () => {
           /> */}
           <OneMap />
           {/* SVG Overlay for circles */}
-          <svg
-            viewBox="0 0 100 56.25"
-            className="absolute inset-0 w-full h-full"
-            preserveAspectRatio="xMidYMid slice"
-          >
-            {/* Town circles */}
-            {townData.map((town) => {
-              const scaledY = town.y * 0.5625; // Scale y for 16:9 aspect ratio
-              return (
-                <g key={town.id}>
-                  {/* Shadow */}
-                  <circle
-                    cx={town.x}
-                    cy={scaledY}
-                    r={circleRadius + 0.3}
-                    fill="rgba(0,0,0,0.4)"
-                  />
-                  {/* Main circle */}
-                  <circle
-                    cx={town.x}
-                    cy={scaledY}
-                    r={circleRadius}
-                    fill={getColor(town.percentage)}
-                    stroke="#fff"
-                    strokeWidth="0.4"
-                    className="cursor-pointer transition-all duration-200"
-                    style={{
-                      filter:
-                        hoveredTown?.id === town.id ? "brightness(1.2)" : "none",
-                    }}
-                    onMouseEnter={() => setHoveredTown(town)}
-                    onMouseLeave={() => setHoveredTown(null)}
-                  />
-                  {/* Percentage label */}
-                  <text
-                    x={town.x}
-                    y={scaledY + 0.2}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="pointer-events-none select-none"
-                    fill={town.percentage >= 6 ? "#fff" : "#1f2937"}
-                    fontSize="1.6"
-                    fontWeight="bold"
-                  >
-                    {town.percentage}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
+     
         </div>
 
         {/* Hover Tooltip */}
