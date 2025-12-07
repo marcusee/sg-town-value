@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import OneMap from "./OneMap";
 import { useHoverStore } from "../store/HoverStore";
-import { townInfo } from "../data/towndata";
+import { useTownStore } from "../store/TownStore";
 
 interface TownData {
   id: string;
@@ -30,7 +30,7 @@ const getColor = (percentage: number): string => {
 const SingaporeHDBMapCircles: React.FC = () => {
   const [hoveredTown, setHoveredTown] = useState<TownData | null>(null);
   const {hoveredTownInfo, setHovered} = useHoverStore();
-
+  const {townInfos} = useTownStore();
   return (
     <div className="w-full max-w-6xl mx-auto p-4 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold text-center mb-2 text-gray-800">
@@ -72,7 +72,7 @@ const SingaporeHDBMapCircles: React.FC = () => {
           All Towns (sorted by %)
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-          {[...townInfo]
+          {[...townInfos]
             .sort((a, b) => b.avgPsf - a.avgPsf)
             .map((town) => (
               <div

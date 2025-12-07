@@ -3,16 +3,18 @@
 import React, { useRef, useState } from "react";
 import type { FeatureCollection, Geometry, Point } from "geojson";
 import ReactMapGL, { Layer, Source, Popup, MapLayerMouseEvent } from "react-map-gl/maplibre";
-import { TownInfo, townInfo } from "../data/towndata";
+import { TownInfo, initialTownInfo } from "../data/towndata";
 import { useHoverStore } from "../store/HoverStore";
+import { useTownStore } from "../store/TownStore";
 
 const OneMap: React.FC = () => {
   const mapRef = useRef<any>(null);
   const windowWidth = window.innerWidth;
   const isMobile = typeof window !== "undefined" && windowWidth < 768;
   const {hoveredTownInfo, setHovered} = useHoverStore();
+  const {townInfos} = useTownStore()
 
-  const features = townInfo.map(info => {
+  const features = townInfos.map(info => {
     return {
       type: "Feature" as const,
       properties: info,
