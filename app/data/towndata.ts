@@ -6,8 +6,6 @@ export interface TownInfo {
   avgPsf?: number;
 }
 
-
-
 export const townInfo: TownInfo[] = [
   { id: "sengkang",        name: "SENGKANG",        x: 103.8951, y: 1.3911 },
   { id: "punggol",         name: "PUNGGOL",         x: 103.9065, y: 1.4055 },

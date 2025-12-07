@@ -2,8 +2,14 @@
 "use client"
 
 import { create } from "zustand";
+import { TownInfo } from "../data/towndata";
 
-export const useHoverStore = create((set) => ({
-    hovered: "",                         // what you're hovering
-    setHovered: (value: string) => set({ hovered: value }),
+interface HoveredState {
+  hoveredTownInfo: TownInfo | null;
+  setHovered: (partial: TownInfo) => void;
+}
+
+export const useHoverStore = create<HoveredState>((set) => ({
+  hoveredTownInfo: null,                         // what you're hovering
+  setHovered: (townInfo: TownInfo) => set({ hoveredTownInfo: townInfo }),
 }));

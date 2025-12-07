@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import OneMap from "./OneMap";
+import { useHoverStore } from "../store/HoverStore";
 
 interface TownData {
   id: string;
@@ -57,6 +58,7 @@ const getColor = (percentage: number): string => {
 
 const SingaporeHDBMapCircles: React.FC = () => {
   const [hoveredTown, setHoveredTown] = useState<TownData | null>(null);
+  const {hoveredTownInfo} = useHoverStore();
 
   return (
     <div className="w-full max-w-6xl mx-auto p-4 bg-white rounded-xl shadow-lg">
@@ -82,16 +84,16 @@ const SingaporeHDBMapCircles: React.FC = () => {
         </div>
 
         {/* Hover Tooltip */}
-        {hoveredTown && (
+        {hoveredTownInfo && (
           <div className="absolute top-3 right-3 bg-white/95 backdrop-blur rounded-lg shadow-lg p-3 border border-gray-200 min-w-[160px]">
-            <p className="font-bold text-gray-800 text-sm">{hoveredTown.name}</p>
+            <p className="font-bold text-gray-800 text-sm">{hoveredTownInfo.name}</p>
             <div className="flex items-center gap-2 mt-1">
               <div
                 className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: getColor(hoveredTown.percentage) }}
+                style={{ backgroundColor: getColor(3) }}
               />
               <p className="text-xl font-bold text-gray-900">
-                {hoveredTown.percentage}%
+                {hoveredTownInfo.avgPsf}%
               </p>
             </div>
           </div>

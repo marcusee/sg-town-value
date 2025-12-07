@@ -1,22 +1,24 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useState } from "react";
 import type { FeatureCollection, Geometry, Point } from "geojson";
-import ReactMapGL, { Layer, Source } from "react-map-gl/maplibre";
-import { townInfo } from "../data/towndata";
+import ReactMapGL, { Layer, Source, Popup, MapLayerMouseEvent } from "react-map-gl/maplibre";
+import { TownInfo, townInfo } from "../data/towndata";
+import { useHoverStore } from "../store/HoverStore";
 
 const OneMap: React.FC = () => {
+  const mapRef = useRef<any>(null);
+
   const windowWidth = window.innerWidth;
   const isMobile = typeof window !== "undefined" && windowWidth < 768;
   // 👇 Properly typed GeoJSON
+  const [hoverInfo, setHoverInfo] = useState<{ longitude: number; latitude: number; feature: any } | null>(null);
+  const {hoveredTownInfo, setHovered} = useHoverStore();
 
   const features = townInfo.map(info => {
     return {
       type: "Feature" as const,
-      properties: {
-        title: `${info.name}`,
-        avgPsf: 1233,
-      },
+      properties: info,
       geometry: {
         type: "Point" as const,
         coordinates: [info.x, info.y]
@@ -24,29 +26,11 @@ const OneMap: React.FC = () => {
     }
   })
 
-  const points: FeatureCollection<Point, { title: string; avgPsf: number }> = {
+  const points: FeatureCollection<Point, TownInfo> = {
     type: "FeatureCollection",
     features: features
   };
 
-  // const points: FeatureCollection<Point, { title: string; avgPsf: number }> = () => {
-  //   return {
-  //     type: "FeatureCollection",
-  //     features: [
-  //       {
-  //         type: "Feature",
-  //         properties: {
-  //           title: "Sembawang",
-  //           avgPsf: 1233,
-  //         },
-  //         geometry: {
-  //           type: "Point",
-  //           coordinates: [103.8198, 1.4432],
-  //         },
-  //       },
-  //     ],
-  //   }
-  // };
 
   let zoom = isMobile ? 9.5 : 10  // 👈 a bit further out on mobile
 
@@ -54,6 +38,7 @@ const OneMap: React.FC = () => {
   return (
     <div className="w-full h-full absolute inset-0">
       <ReactMapGL
+        ref={mapRef}
         initialViewState={{
           longitude: 103.82,    // center of SG
           latitude: 1.35,       // Moved up to see north coastline
@@ -65,6 +50,18 @@ const OneMap: React.FC = () => {
           [103.596, 1.1443],
           [104.1, 1.6],
         ]}
+        onMouseMove={(e: MapLayerMouseEvent) => {
+          if (!mapRef) return;
+          const map = mapRef.current.getMap();
+          const hoveredFeature = map.queryRenderedFeatures(e.point)?.at(0);
+
+          if (hoveredFeature ) {
+            if (hoveredFeature.properties.id !== hoveredTownInfo?.id) {
+              console.log(hoveredFeature.properties)
+              setHovered(hoveredFeature.properties)
+            }
+          }
+        }}
         attributionControl={false}
 
         /* 🔥 Disable all movement */
@@ -76,7 +73,7 @@ const OneMap: React.FC = () => {
         keyboard={false}
         interactive={true}     // ← easiest way: makes map fully static
       >
-        <Source id="points" type="geojson" data={points}>
+        <Source id="points" type="geojson" data={points} >
           <Layer
             id="point-circle"
             type="circle"
@@ -114,6 +111,26 @@ const OneMap: React.FC = () => {
             }}
           />
         </Source>
+        {/* <Popup
+          longitude={100}
+          latitude={1.3}
+          closeButton={false}
+          closeOnClick={false}
+          anchor="top"
+        >
+          <div>hello</div>
+        </Popup>
+        {hoverInfo && (
+          <Popup
+            longitude={hoverInfo.longitude}
+            latitude={hoverInfo.latitude}
+            closeButton={false}
+            closeOnClick={false}
+            anchor="top"
+          >
+            <div>{hoverInfo.feature?.properties?.title}</div>
+          </Popup>
+        )} */}
       </ReactMapGL>
     </div>
   );
