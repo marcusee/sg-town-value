@@ -58,7 +58,7 @@ const SingaporeHDBMapCircles: React.FC = () => {
                 style={{ backgroundColor: getColor(3) }}
               />
               <p className="text-xl font-bold text-gray-900">
-                {hoveredTownInfo.avgPsf}%
+                ${hoveredTownInfo.avgPsf} PSF
               </p>
             </div>
           </div>
@@ -68,7 +68,7 @@ const SingaporeHDBMapCircles: React.FC = () => {
       {/* Town List */}
       <div className="mt-6">
         <h3 className="text-sm font-semibold text-gray-700 mb-3">
-          All Towns (sorted by %)
+          All Towns (sorted by avg psf)
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
           {[...townInfos]
@@ -85,14 +85,14 @@ const SingaporeHDBMapCircles: React.FC = () => {
               >
                 <div
                   className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: getColor(town.avgPsf) }}
+                  style={{ backgroundColor: town.color }}
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-medium text-gray-700 truncate leading-tight">
                     {town.name}
                   </p>
                   <p className="text-xs font-semibold text-gray-900">
-                    {town.avgPsf}%
+                    ${town.avgPsf} PSF
                   </p>
                 </div>
               </div>

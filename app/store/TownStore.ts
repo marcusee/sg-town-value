@@ -3,20 +3,33 @@
 import { create } from "zustand";
 import { initialTownInfo, TownInfo } from "../data/towndata";
 import { resaleData } from "../data/resaleData";
+import { COLORS, NO_DATA_COLOR } from "../data/heatMapColor";
+
+
+interface ColorScale {
+  min: number; max: number; getColor: (psf: number) => string 
+}
 
 interface TownInfoState {
   townInfos: TownInfo[];
-  setTownInfo: (partial: TownInfo[]) => void;
+  colorScale: ColorScale | null;
   calculateAvgPsf: () => void;
 }
 
 
 export const useTownStore = create<TownInfoState>((set) => ({
-  townInfos: initialTownInfo,                         // what you're hovering
-  setTownInfo: (townInfo: TownInfo[]) => set({ townInfos: townInfo }),
+  townInfos: initialTownInfo, 
+  colorScale: null,               
   calculateAvgPsf: () => {
     const updatedTownInfo = calculateAvgPsfByTown(resaleData, initialTownInfo);
-    return set({ townInfos: updatedTownInfo })
+    // Create color scale based on calculated data
+    const colorScale = createColorScale(updatedTownInfo);
+    // Add colors to towns
+    const townsWithColors = updatedTownInfo.map(town => ({
+      ...town,
+      color: colorScale.getColor(town.avgPsf)
+    }));
+    return set({ townInfos: townsWithColors, colorScale })
   }
 }));
 
@@ -61,4 +74,26 @@ function calculateAvgPsfByTown(resaleData: any[], townInfo: TownInfo[]): TownInf
   }));
 }
 
-// Usage
+
+
+export function createColorScale(towns: TownInfo[]) {
+  const psfValues = towns.map(t => t.avgPsf).filter(v => v > 0);
+  
+  if (psfValues.length === 0) {
+    return { getColor: () => NO_DATA_COLOR, min: 0, max: 0 };
+  }
+  
+  const min = Math.min(...psfValues);
+  const max = Math.max(...psfValues);
+
+  const getColor = (avgPsf: number): string => {
+    if (avgPsf <= 0) return NO_DATA_COLOR;
+    
+    const normalized = (avgPsf - min) / (max - min);
+    const index = Math.min(Math.floor(normalized * COLORS.length), COLORS.length - 1);
+    
+    return COLORS[index];
+  };
+
+  return { getColor, min, max, colors: COLORS };
+}

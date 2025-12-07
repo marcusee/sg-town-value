@@ -9,8 +9,7 @@ import { useTownStore } from "../store/TownStore";
 
 const OneMap: React.FC = () => {
   const mapRef = useRef<any>(null);
-  const windowWidth = window.innerWidth;
-  const isMobile = typeof window !== "undefined" && windowWidth < 768;
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const {hoveredTownInfo, setHovered} = useHoverStore();
   const {townInfos} = useTownStore()
 
@@ -52,12 +51,19 @@ const OneMap: React.FC = () => {
           if (!mapRef) return;
           const map = mapRef.current.getMap();
           const hoveredFeature = map.queryRenderedFeatures(e.point)?.at(0);
+          const canvas = map.getCanvas();
 
           if (hoveredFeature ) {
+            canvas.style.cursor = "pointer";
             if (hoveredFeature.properties.id !== hoveredTownInfo?.id) {
+
               console.log(hoveredFeature.properties)
               setHovered(hoveredFeature.properties)
             }
+          }
+          else {
+            canvas.style.cursor = "";
+            setHovered(null)
           }
         }}
         attributionControl={false}
@@ -77,7 +83,7 @@ const OneMap: React.FC = () => {
             type="circle"
             paint={{
               "circle-radius": zoom * 2.5,              // bigger so text feels “inside”
-              "circle-color": "#ff0000",
+              "circle-color": ["get", "color"],  // 👈 Change from "#ff0000" to this
               "circle-stroke-width": 2,
               "circle-stroke-color": "#ffffff",
               "circle-opacity": 0.3,
@@ -99,13 +105,13 @@ const OneMap: React.FC = () => {
               "text-size": zoom + 5,
               "text-anchor": "center",   // center on the point
               "text-offset": [0, 0],     // [0,0] = right on top of the circle
-              "text-font": ["Open Sans Regular"],
+              "text-font": ["Open Sans Bold"],  // 👈 Bold font
 
             }}
             paint={{
-              "text-color": "#ffffff",
-              "text-halo-color": "#000000",
-              "text-halo-width": 1,
+              "text-color": "#1f2937",          // 👈 Dark gray text
+              "text-halo-color": "#ffffff",     // 👈 White halo
+              "text-halo-width": 2,             // 👈 Thicker halo
             }}
           />
         </Source>
