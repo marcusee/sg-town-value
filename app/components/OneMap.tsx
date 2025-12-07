@@ -8,11 +8,8 @@ import { useHoverStore } from "../store/HoverStore";
 
 const OneMap: React.FC = () => {
   const mapRef = useRef<any>(null);
-
   const windowWidth = window.innerWidth;
   const isMobile = typeof window !== "undefined" && windowWidth < 768;
-  // 👇 Properly typed GeoJSON
-  const [hoverInfo, setHoverInfo] = useState<{ longitude: number; latitude: number; feature: any } | null>(null);
   const {hoveredTownInfo, setHovered} = useHoverStore();
 
   const features = townInfo.map(info => {
@@ -33,7 +30,6 @@ const OneMap: React.FC = () => {
 
 
   let zoom = isMobile ? 9.5 : 10  // 👈 a bit further out on mobile
-
 
   return (
     <div className="w-full h-full absolute inset-0">
@@ -111,26 +107,6 @@ const OneMap: React.FC = () => {
             }}
           />
         </Source>
-        {/* <Popup
-          longitude={100}
-          latitude={1.3}
-          closeButton={false}
-          closeOnClick={false}
-          anchor="top"
-        >
-          <div>hello</div>
-        </Popup>
-        {hoverInfo && (
-          <Popup
-            longitude={hoverInfo.longitude}
-            latitude={hoverInfo.latitude}
-            closeButton={false}
-            closeOnClick={false}
-            anchor="top"
-          >
-            <div>{hoverInfo.feature?.properties?.title}</div>
-          </Popup>
-        )} */}
       </ReactMapGL>
     </div>
   );
