@@ -6,10 +6,10 @@ import { TownInfo } from "../data/towndata";
 
 interface HoveredState {
   hoveredTownInfo: TownInfo | null;
-  setHovered: (partial: TownInfo) => void;
+  setHovered: (partial: TownInfo | null) => void;
 }
 
 export const useHoverStore = create<HoveredState>((set) => ({
   hoveredTownInfo: null,                         // what you're hovering
-  setHovered: (townInfo: TownInfo) => set({ hoveredTownInfo: townInfo }),
+  setHovered: (townInfo: TownInfo | null) => set({ hoveredTownInfo: townInfo }),
 }));

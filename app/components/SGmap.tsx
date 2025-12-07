@@ -28,7 +28,6 @@ const getColor = (percentage: number): string => {
 };
 
 const SingaporeHDBMapCircles: React.FC = () => {
-  const [hoveredTown, setHoveredTown] = useState<TownData | null>(null);
   const {hoveredTownInfo, setHovered} = useHoverStore();
   const {townInfos} = useTownStore();
   return (
@@ -77,12 +76,12 @@ const SingaporeHDBMapCircles: React.FC = () => {
             .map((town) => (
               <div
                 key={`list-${town.id}`}
-                className={`flex items-center gap-2 p-2 rounded-md transition-colors cursor-default ${hoveredTown?.id === town.id
+                className={`flex items-center gap-2 p-2 rounded-md transition-colors cursor-default ${hoveredTownInfo?.id === town.id
                   ? "bg-gray-200"
                   : "bg-gray-50 hover:bg-gray-100"
                   }`}
                 onMouseEnter={() => setHovered(town)}
-                onMouseLeave={() => setHoveredTown(null)}
+                onMouseLeave={() => setHovered(null)}
               >
                 <div
                   className="w-3 h-3 rounded-full flex-shrink-0"
