@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import OneMap from "./OneMap";
 import { useHoverStore } from "../store/HoverStore";
+import { townInfo } from "../data/towndata";
 
 interface TownData {
   id: string;
@@ -12,36 +13,6 @@ interface TownData {
   y: number; // percentage position (0-100)
 }
 
-// Coordinates positioned for actual Singapore map
-// Adjust these x,y values to match your map image
-const townData: TownData[] = [
-  { id: "sengkang", name: "SENGKANG", percentage: 8.2, x: 72, y: 28 },
-  { id: "punggol", name: "PUNGGOL", percentage: 7.3, x: 80, y: 20 },
-  { id: "woodlands", name: "WOODLANDS", percentage: 7.1, x: 46, y: 8 },
-  { id: "yishun", name: "YISHUN", percentage: 6.8, x: 55, y: 18 },
-  { id: "tampines", name: "TAMPINES", percentage: 6.8, x: 85, y: 42 },
-  { id: "jurong-west", name: "JURONG WEST", percentage: 6.6, x: 12, y: 48 },
-  { id: "bedok", name: "BEDOK", percentage: 5.2, x: 82, y: 55 },
-  { id: "hougang", name: "HOUGANG", percentage: 5.1, x: 68, y: 35 },
-  { id: "choa-chu-kang", name: "CHOA CHU KANG", percentage: 4.5, x: 25, y: 25 },
-  { id: "bukit-batok", name: "BUKIT BATOK", percentage: 4.1, x: 22, y: 40 },
-  { id: "ang-mo-kio", name: "ANG MO KIO", percentage: 4.1, x: 55, y: 32 },
-  { id: "bukit-merah", name: "BUKIT MERAH", percentage: 3.8, x: 42, y: 62 },
-  { id: "bukit-panjang", name: "BUKIT PANJANG", percentage: 3.6, x: 32, y: 28 },
-  { id: "toa-payoh", name: "TOA PAYOH", percentage: 3.2, x: 50, y: 45 },
-  { id: "kallang-whampoa", name: "KALLANG/WHAMPOA", percentage: 3.1, x: 58, y: 52 },
-  { id: "sembawang", name: "SEMBAWANG", percentage: 3.0, x: 52, y: 5 },
-  { id: "pasir-ris", name: "PASIR RIS", percentage: 2.9, x: 92, y: 30 },
-  { id: "queenstown", name: "QUEENSTOWN", percentage: 2.7, x: 32, y: 55 },
-  { id: "geylang", name: "GEYLANG", percentage: 2.5, x: 68, y: 55 },
-  { id: "clementi", name: "CLEMENTI", percentage: 2.2, x: 22, y: 55 },
-  { id: "jurong-east", name: "JURONG EAST", percentage: 2.0, x: 15, y: 42 },
-  { id: "serangoon", name: "SERANGOON", percentage: 1.8, x: 62, y: 40 },
-  { id: "bishan", name: "BISHAN", percentage: 1.8, x: 48, y: 38 },
-  { id: "central-area", name: "CENTRAL AREA", percentage: 0.8, x: 52, y: 68 },
-  { id: "marine-parade", name: "MARINE PARADE", percentage: 0.6, x: 65, y: 68 },
-  { id: "bukit-timah", name: "BUKIT TIMAH", percentage: 0.2, x: 38, y: 42 },
-];
 
 const getColor = (percentage: number): string => {
   if (percentage >= 8) return "#ef4444";
@@ -58,7 +29,7 @@ const getColor = (percentage: number): string => {
 
 const SingaporeHDBMapCircles: React.FC = () => {
   const [hoveredTown, setHoveredTown] = useState<TownData | null>(null);
-  const {hoveredTownInfo} = useHoverStore();
+  const {hoveredTownInfo, setHovered} = useHoverStore();
 
   return (
     <div className="w-full max-w-6xl mx-auto p-4 bg-white rounded-xl shadow-lg">
@@ -73,11 +44,6 @@ const SingaporeHDBMapCircles: React.FC = () => {
       <div className="relative rounded-lg overflow-hidden border border-gray-200">
         {/* Background Map Image */}
         <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
-          {/* <img
-            src={mapImageUrl}
-            alt="Singapore Map"
-            className="w-full h-full obcject-cover"
-          /> */}
           <OneMap />
           {/* SVG Overlay for circles */}
      
@@ -106,8 +72,8 @@ const SingaporeHDBMapCircles: React.FC = () => {
           All Towns (sorted by %)
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-          {[...townData]
-            .sort((a, b) => b.percentage - a.percentage)
+          {[...townInfo]
+            .sort((a, b) => b.avgPsf - a.avgPsf)
             .map((town) => (
               <div
                 key={`list-${town.id}`}
@@ -115,19 +81,19 @@ const SingaporeHDBMapCircles: React.FC = () => {
                   ? "bg-gray-200"
                   : "bg-gray-50 hover:bg-gray-100"
                   }`}
-                onMouseEnter={() => setHoveredTown(town)}
+                onMouseEnter={() => setHovered(town)}
                 onMouseLeave={() => setHoveredTown(null)}
               >
                 <div
                   className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: getColor(town.percentage) }}
+                  style={{ backgroundColor: getColor(town.avgPsf) }}
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-medium text-gray-700 truncate leading-tight">
                     {town.name}
                   </p>
                   <p className="text-xs font-semibold text-gray-900">
-                    {town.percentage}%
+                    {town.avgPsf}%
                   </p>
                 </div>
               </div>
