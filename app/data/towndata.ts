@@ -28,7 +28,7 @@ export const initialTownInfo: TownInfo[] = [
   { id: "sembawang",       name: "SEMBAWANG",       x: 103.8198, y: 1.4432 , avgPsf: 0, color :  NO_DATA_COLOR},
   { id: "pasir-ris",       name: "PASIR RIS",       x: 103.9646, y: 1.3720 , avgPsf: 0, color :  NO_DATA_COLOR},
   { id: "queenstown",      name: "QUEENSTOWN",      x: 103.8060, y: 1.2940 , avgPsf: 0, color :  NO_DATA_COLOR},
-  { id: "geylang",         name: "GEYLANG",         x: 103.8820, y: 1.3180 , avgPsf: 0, color :  NO_DATA_COLOR},
+  { id: "geylang",         name: "GEYLANG",         x: 103.8920, y: 1.3180 , avgPsf: 0, color :  NO_DATA_COLOR},
   { id: "clementi",        name: "CLEMENTI",        x: 103.7702, y: 1.3151 , avgPsf: 0, color :  NO_DATA_COLOR},
   { id: "jurong-east",     name: "JURONG EAST",     x: 103.7396, y: 1.3331 , avgPsf: 0, color :  NO_DATA_COLOR},
   { id: "serangoon",       name: "SERANGOON",       x: 103.8730, y: 1.3541 , avgPsf: 0, color :  NO_DATA_COLOR},

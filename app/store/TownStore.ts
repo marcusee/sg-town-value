@@ -4,24 +4,59 @@ import { create } from "zustand";
 import { initialTownInfo, TownInfo } from "../data/towndata";
 import { resaleData } from "../data/resaleData";
 import { COLORS, NO_DATA_COLOR } from "../data/heatMapColor";
+import { ResaleRecord } from "../types/resale";
 
 
 interface ColorScale {
   min: number; max: number; getColor: (psf: number) => string 
 }
 
+export interface TransactionFilters {
+  year : string;
+  flatType : string;
+  storyRange: string;
+  commencement : string;
+}
+
+
 interface TownInfoState {
   townInfos: TownInfo[];
   colorScale: ColorScale | null;
-  calculateAvgPsf: () => void;
+  calculateAvgPsf: (filters? : TransactionFilters) => void;
 }
 
+
+function filterResaleData(filters? : TransactionFilters) : ResaleRecord[] {
+    let filteredData = [...resaleData];
+    // Apply filters if provided
+    if (filters) {
+      if (filters.year) {
+        filteredData = filteredData.filter(t => t.month.startsWith(filters.year));
+      }
+      if (filters.flatType && filters.flatType !== "ALL") {
+        filteredData = filteredData.filter(t => t.flat_type === filters.flatType);
+      }
+      if (filters.storyRange && filters.storyRange !== "ALL") {
+        filteredData = filteredData.filter(t => t.storey_range === filters.storyRange);
+      }
+      if (filters.commencement && filters.commencement !== "ALL") {
+        filteredData = filteredData.filter(t => t.lease_commence_date === filters.commencement);
+      }
+    } else {
+      filteredData = filteredData.filter(t => t.month.startsWith("2025"));
+    }
+
+    return filteredData
+}
 
 export const useTownStore = create<TownInfoState>((set) => ({
   townInfos: initialTownInfo, 
   colorScale: null,               
-  calculateAvgPsf: () => {
-    const updatedTownInfo = calculateAvgPsfByTown(resaleData, initialTownInfo);
+  calculateAvgPsf: (filters? : TransactionFilters) => {
+
+    let filteredData = filterResaleData(filters);
+
+    const updatedTownInfo = calculateAvgPsfByTown(filteredData, initialTownInfo);
     // Create color scale based on calculated data
     const colorScale = createColorScale(updatedTownInfo);
     // Add colors to towns
@@ -37,21 +72,11 @@ export const useTownStore = create<TownInfoState>((set) => ({
 const SQM_TO_SQFT = 10.7639;
 
 function calculateAvgPsfByTown(resaleData: any[], townInfo: TownInfo[]): TownInfo[] {
-  const year = 2025;
-  const startMonth = `${year}-01`;
-  const endMonth = `${year}-12`;
-
-  const filtered = resaleData.filter(t => {
-    if (startMonth && t.month < startMonth) return false;
-    if (endMonth && t.month > endMonth) return false;
-    return true;
-  });
-
 
   // Group transactions by town and calculate PSF for each
   const townStats: Record<string, { totalPsf: number; count: number }> = {};
 
-  filtered.forEach(transaction => {
+  resaleData.forEach(transaction => {
     const town = transaction.town;
     const price = parseFloat(transaction.resale_price);
     const areaSqm = parseFloat(transaction.floor_area_sqm);
@@ -70,6 +95,30 @@ function calculateAvgPsfByTown(resaleData: any[], townInfo: TownInfo[]): TownInf
     ...town,
     avgPsf: townStats[town.name]
       ? Math.round(townStats[town.name].totalPsf / townStats[town.name].count)
+      : 0
+  }));
+}
+
+function calculateMedianPsfByTown(resaleData: any[], townInfo: TownInfo[]): TownInfo[] {
+  const townPsfValues: Record<string, number[]> = {};
+
+  resaleData.forEach(transaction => {
+    const town = transaction.town;
+    const price = parseFloat(transaction.resale_price);
+    const areaSqm = parseFloat(transaction.floor_area_sqm);
+    const areaSqft = areaSqm * SQM_TO_SQFT;
+    const psf = price / areaSqft;
+
+    if (!townPsfValues[town]) {
+      townPsfValues[town] = [];
+    }
+    townPsfValues[town].push(psf);
+  });
+
+  return townInfo.map(town => ({
+    ...town,
+    avgPsf: townPsfValues[town.name]
+      ? Math.round(calculateMedian(townPsfValues[town.name]))
       : 0
   }));
 }

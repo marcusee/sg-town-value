@@ -4,37 +4,19 @@ import React, { useState } from "react";
 import OneMap from "./OneMap";
 import { useHoverStore } from "../store/HoverStore";
 import { useTownStore } from "../store/TownStore";
+import FilterControl from "./FilterControl";
 
-interface TownData {
-  id: string;
-  name: string;
-  percentage: number;
-  x: number; // percentage position (0-100)
-  y: number; // percentage position (0-100)
-}
-
-
-const getColor = (percentage: number): string => {
-  if (percentage >= 8) return "#ef4444";
-  if (percentage >= 7) return "#f97316";
-  if (percentage >= 6) return "#fb923c";
-  if (percentage >= 5) return "#fbbf24";
-  if (percentage >= 4) return "#fcd34d";
-  if (percentage >= 3) return "#fde047";
-  if (percentage >= 2) return "#bef264";
-  if (percentage >= 1) return "#86efac";
-  if (percentage >= 0.5) return "#67e8f9";
-  return "#7dd3fc";
-};
-
-const SingaporeHDBMapCircles: React.FC = () => {
+const SGHeatMap: React.FC = () => {
   const {hoveredTownInfo, setHovered} = useHoverStore();
   const {townInfos} = useTownStore();
   return (
     <div className="w-full max-w-6xl mx-auto p-4 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold text-center mb-2 text-gray-800">
-        Singapore HDB Town Distribution
+        Singapore HDB Resale Price Distribution
       </h2>
+      <div className="flex justify-center py-2">
+        <FilterControl />
+      </div>
       <p className="text-center text-gray-500 text-sm mb-4">
         AVG psf price by town
       </p>
@@ -44,8 +26,6 @@ const SingaporeHDBMapCircles: React.FC = () => {
         {/* Background Map Image */}
         <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
           <OneMap />
-          {/* SVG Overlay for circles */}
-     
         </div>
 
         {/* Hover Tooltip */}
@@ -55,7 +35,7 @@ const SingaporeHDBMapCircles: React.FC = () => {
             <div className="flex items-center gap-2 mt-1">
               <div
                 className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: getColor(3) }}
+                style={{ backgroundColor: hoveredTownInfo.color }}
               />
               <p className="text-xl font-bold text-gray-900">
                 ${hoveredTownInfo.avgPsf} PSF
@@ -103,4 +83,4 @@ const SingaporeHDBMapCircles: React.FC = () => {
   );
 };
 
-export default SingaporeHDBMapCircles;
+export default SGHeatMap;
