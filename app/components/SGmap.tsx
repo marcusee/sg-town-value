@@ -8,7 +8,7 @@ import FilterControl from "./FilterControl";
 
 const SGHeatMap: React.FC = () => {
   const {hoveredTownInfo, setHovered} = useHoverStore();
-  const {townInfos} = useTownStore();
+  const {towns} = useTownStore();
   return (
     <div className="w-full max-w-6xl mx-auto p-4 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold text-center mb-2 text-gray-800">
@@ -48,10 +48,10 @@ const SGHeatMap: React.FC = () => {
       {/* Town List */}
       <div className="mt-6">
         <h3 className="text-sm font-semibold text-gray-700 mb-3">
-          All Towns (sorted by avg psf)
+          All Towns
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-          {[...townInfos]
+          {[...towns]
             .sort((a, b) => b.avgPsf - a.avgPsf)
             .map((town) => (
               <div
@@ -72,7 +72,7 @@ const SGHeatMap: React.FC = () => {
                     {town.name}
                   </p>
                   <p className="text-xs font-semibold text-gray-900">
-                    ${town.avgPsf} PSF
+                    ${town.displayValue} PSF
                   </p>
                 </div>
               </div>

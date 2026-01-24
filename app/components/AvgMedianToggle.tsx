@@ -4,13 +4,21 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
+import { useTownStore } from "../store/TownStore";
 
 export function AvgMedianToggle() {
+  
+  const {setPriceMetric, priceMetric} = useTownStore()
+  
   return (
     <ToggleGroup
       type="single"
       defaultValue="avg"
       className="bg-muted p-1 rounded-lg"
+      onValueChange={(value) => {
+        if (value !== "avg" && value !== "median") return
+        setPriceMetric(value)
+      }}
     >
       <ToggleGroupItem
         value="avg"

@@ -19,9 +19,8 @@ const FilterControl: React.FC = () => {
   const [flatType, setFlatType] = useState<string>("ALL")
   const [commencement, setCommmence] = useState<string>("ALL")
 
-  const { calculateAvgPsf } = useTownStore();
+  const { updateTownPrices } = useTownStore();
 
-  // This fires whenever selection changes
   const handleYearChange = (value: string) => {
     setYear(value)
   }
@@ -30,36 +29,30 @@ const FilterControl: React.FC = () => {
     setFloor(value)
   }
 
-
   const handleFlatChange = (value: string) => {
     setFlatType(value)
   }
+
   const handleCommencementChange = (value: string) => {
     setCommmence(value)
   }
 
   useEffect(() => {
-    calculateAvgPsf({
+    updateTownPrices({
       year: year,
       flatType: flatType === "ALL" ? "" : flatType,
       storyRange: floor === "ALL" ? "" : floor,
-      commencement : commencement === "ALL" ? "" : commencement
+      commencement: commencement === "ALL" ? "" : commencement
     })
   }, [year, floor, flatType, commencement])
 
-  // calculateAvgPsf({
-  //   year: year,
-  //   flatType: flatType,
-  //   storyRange: floor
-  // })
-
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-4 justify-center">
+    <div className="flex flex-col gap-4 px-4">
+      <div className="grid grid-cols-2 gap-3 sm:flex sm:gap-4 sm:justify-center">
         <div className="flex flex-col gap-1">
           <label className="text-xs text-gray-500">Year</label>
           <Select value={year} onValueChange={handleYearChange}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-full sm:w-[140px]">
               <SelectValue placeholder="Year" />
             </SelectTrigger>
             <SelectContent>
@@ -73,7 +66,7 @@ const FilterControl: React.FC = () => {
         <div className="flex flex-col gap-1">
           <label className="text-xs text-gray-500">Floor</label>
           <Select value={floor} onValueChange={handleFloorChange}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-full sm:w-[140px]">
               <SelectValue placeholder="Floor" />
             </SelectTrigger>
             <SelectContent>
@@ -87,7 +80,7 @@ const FilterControl: React.FC = () => {
         <div className="flex flex-col gap-1">
           <label className="text-xs text-gray-500">Flat Type</label>
           <Select value={flatType} onValueChange={handleFlatChange}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-full sm:w-[140px]">
               <SelectValue placeholder="Flat Type" />
             </SelectTrigger>
             <SelectContent>
@@ -101,7 +94,7 @@ const FilterControl: React.FC = () => {
         <div className="flex flex-col gap-1">
           <label className="text-xs text-gray-500">Commencement</label>
           <Select value={commencement} onValueChange={handleCommencementChange}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-full sm:w-[140px]">
               <SelectValue placeholder="Commencement" />
             </SelectTrigger>
             <SelectContent>
@@ -111,12 +104,13 @@ const FilterControl: React.FC = () => {
             </SelectContent>
           </Select>
         </div>
-
       </div>
-      <div className="flex gap-4 justify-center">
+
+      <div className="flex justify-center">
         <AvgMedianToggle />
       </div>
     </div>
   )
 }
+
 export default FilterControl;

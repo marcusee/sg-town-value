@@ -10,10 +10,10 @@ import { useTownStore } from "../store/TownStore";
 const OneMap: React.FC = () => {
   const mapRef = useRef<any>(null);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-  const {hoveredTownInfo, setHovered} = useHoverStore();
-  const {townInfos} = useTownStore()
+  const { hoveredTownInfo, setHovered } = useHoverStore();
+  const { towns } = useTownStore()
 
-  const features = townInfos.map(info => {
+  const features = towns.map(info => {
     return {
       type: "Feature" as const,
       properties: info,
@@ -44,20 +44,24 @@ const OneMap: React.FC = () => {
         style={{ width: "100%", height: "100%" }}
         mapStyle="https://www.onemap.gov.sg/maps/json/raster/mbstyle/Grey.json"
         maxBounds={[
-          [103.596, 1.1443],
-          [104.1, 1.6],
+          [103.596, 1.205],   // SW corner - raised min latitude slightly
+          [104.1, 1.475],     // NE corner - lowered max latitude
         ]}
         onMouseMove={(e: MapLayerMouseEvent) => {
           if (!mapRef) return;
           const map = mapRef.current.getMap();
-          const hoveredFeature = map.queryRenderedFeatures(e.point)?.at(0);
-          const canvas = map.getCanvas();
 
-          if (hoveredFeature ) {
+          if(!map) return;
+          const hoveredFeature = map?.queryRenderedFeatures(e.point)?.at(0);
+
+          if (!hoveredFeature) return;
+
+          const canvas = map.getCanvas();
+          if (!canvas) return;
+
+          if (hoveredFeature) {
             canvas.style.cursor = "pointer";
             if (hoveredFeature.properties.id !== hoveredTownInfo?.id) {
-
-              console.log(hoveredFeature.properties)
               setHovered(hoveredFeature.properties)
             }
           }
@@ -82,8 +86,8 @@ const OneMap: React.FC = () => {
             id="point-circle"
             type="circle"
             paint={{
-              "circle-radius": zoom * 2.5,              // bigger so text feels “inside”
-              "circle-color": ["get", "color"],  // 👈 Change from "#ff0000" to this
+              "circle-radius": zoom * 2.5, 
+              "circle-color": ["get", "color"], 
               "circle-stroke-width": 2,
               "circle-stroke-color": "#ffffff",
               "circle-opacity": 0.3,
@@ -95,23 +99,22 @@ const OneMap: React.FC = () => {
             id="point-label"
             type="symbol"
             layout={{
-              // (avg $<value> psf)
               "text-field": [
                 "concat",
                 "$",
-                ["to-string", ["get", "avgPsf"]],
+                ["to-string", ["get", "displayValue"]],
                 ""
               ],
               "text-size": zoom + 5,
-              "text-anchor": "center",   // center on the point
-              "text-offset": [0, 0],     // [0,0] = right on top of the circle
-              "text-font": ["Open Sans Bold"],  // 👈 Bold font
+              "text-anchor": "center",  
+              "text-offset": [0, 0],     
+              "text-font": ["Open Sans Bold"], 
 
             }}
             paint={{
-              "text-color": "#1f2937",          // 👈 Dark gray text
-              "text-halo-color": "#ffffff",     // 👈 White halo
-              "text-halo-width": 2,             // 👈 Thicker halo
+              "text-color": "#1f2937",        
+              "text-halo-color": "#ffffff",     
+              "text-halo-width": 2,             
             }}
           />
         </Source>

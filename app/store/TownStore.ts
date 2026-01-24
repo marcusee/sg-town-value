@@ -8,141 +8,182 @@ import { ResaleRecord } from "../types/resale";
 
 
 interface ColorScale {
-  min: number; max: number; getColor: (psf: number) => string 
+  min: number;
+  max: number;
+  getColor: (psf: number) => string;
 }
 
 export interface TransactionFilters {
-  year : string;
-  flatType : string;
+  year: string;
+  flatType: string;
   storyRange: string;
-  commencement : string;
+  commencement: string;
 }
 
+export type PriceMetric = "avg" | "median";
 
-interface TownInfoState {
-  townInfos: TownInfo[];
+// Extended TownInfo with both metrics
+export interface TownPriceInfo extends TownInfo {
+  avgPsf: number;
+  medianPsf: number;
+  displayValue : number;
+  transactionCount: number;
+}
+
+interface TownStoreState {
+  towns: TownPriceInfo[];
   colorScale: ColorScale | null;
-  calculateAvgPsf: (filters? : TransactionFilters) => void;
+  priceMetric: PriceMetric;
+  setPriceMetric: (metric: PriceMetric) => void;
+  updateTownPrices: (filters?: TransactionFilters) => void;
 }
-
-
-function filterResaleData(filters? : TransactionFilters) : ResaleRecord[] {
-    let filteredData = [...resaleData];
-    // Apply filters if provided
-    if (filters) {
-      if (filters.year) {
-        filteredData = filteredData.filter(t => t.month.startsWith(filters.year));
-      }
-      if (filters.flatType && filters.flatType !== "ALL") {
-        filteredData = filteredData.filter(t => t.flat_type === filters.flatType);
-      }
-      if (filters.storyRange && filters.storyRange !== "ALL") {
-        filteredData = filteredData.filter(t => t.storey_range === filters.storyRange);
-      }
-      if (filters.commencement && filters.commencement !== "ALL") {
-        filteredData = filteredData.filter(t => t.lease_commence_date === filters.commencement);
-      }
-    } else {
-      filteredData = filteredData.filter(t => t.month.startsWith("2025"));
-    }
-
-    return filteredData
-}
-
-export const useTownStore = create<TownInfoState>((set) => ({
-  townInfos: initialTownInfo, 
-  colorScale: null,               
-  calculateAvgPsf: (filters? : TransactionFilters) => {
-
-    let filteredData = filterResaleData(filters);
-
-    const updatedTownInfo = calculateAvgPsfByTown(filteredData, initialTownInfo);
-    // Create color scale based on calculated data
-    const colorScale = createColorScale(updatedTownInfo);
-    // Add colors to towns
-    const townsWithColors = updatedTownInfo.map(town => ({
-      ...town,
-      color: colorScale.getColor(town.avgPsf)
-    }));
-    return set({ townInfos: townsWithColors, colorScale })
-  }
-}));
 
 
 const SQM_TO_SQFT = 10.7639;
 
-function calculateAvgPsfByTown(resaleData: any[], townInfo: TownInfo[]): TownInfo[] {
 
-  // Group transactions by town and calculate PSF for each
-  const townStats: Record<string, { totalPsf: number; count: number }> = {};
-
-  resaleData.forEach(transaction => {
-    const town = transaction.town;
-    const price = parseFloat(transaction.resale_price);
-    const areaSqm = parseFloat(transaction.floor_area_sqm);
-    const areaSqft = areaSqm * SQM_TO_SQFT;
-    const psf = price / areaSqft;
-
-    if (!townStats[town]) {
-      townStats[town] = { totalPsf: 0, count: 0 };
+function filterTransactions(filters?: TransactionFilters): ResaleRecord[] {
+  let filtered = [...resaleData];
+  if (filters) {
+    if (filters.year && filters.year !== "ALL") {
+      filtered = filtered.filter(t => t.month.startsWith(filters.year));
     }
-    townStats[town].totalPsf += psf;
-    townStats[town].count += 1;
-  });
-
-  // Update townInfo with calculated averages
-  return townInfo.map(town => ({
-    ...town,
-    avgPsf: townStats[town.name]
-      ? Math.round(townStats[town.name].totalPsf / townStats[town.name].count)
-      : 0
-  }));
-}
-
-function calculateMedianPsfByTown(resaleData: any[], townInfo: TownInfo[]): TownInfo[] {
-  const townPsfValues: Record<string, number[]> = {};
-
-  resaleData.forEach(transaction => {
-    const town = transaction.town;
-    const price = parseFloat(transaction.resale_price);
-    const areaSqm = parseFloat(transaction.floor_area_sqm);
-    const areaSqft = areaSqm * SQM_TO_SQFT;
-    const psf = price / areaSqft;
-
-    if (!townPsfValues[town]) {
-      townPsfValues[town] = [];
+    if (filters.flatType && filters.flatType !== "ALL") {
+      filtered = filtered.filter(t => t.flat_type === filters.flatType);
     }
-    townPsfValues[town].push(psf);
-  });
+    if (filters.storyRange && filters.storyRange !== "ALL") {
+      filtered = filtered.filter(t => t.storey_range === filters.storyRange);
+    }
+    if (filters.commencement && filters.commencement !== "ALL") {
+      filtered = filtered.filter(t => t.lease_commence_date === filters.commencement);
+    }
+  } else {
+    // filtered = filtered.filter(t => t.month.startsWith("2025"));
+  }
 
-  return townInfo.map(town => ({
-    ...town,
-    avgPsf: townPsfValues[town.name]
-      ? Math.round(calculateMedian(townPsfValues[town.name]))
-      : 0
-  }));
+  return filtered;
 }
 
 
+function calculatePsfFromTransaction(transaction: any): number {
+  const price = parseFloat(transaction.resale_price);
+  const areaSqm = parseFloat(transaction.floor_area_sqm);
+  const areaSqft = areaSqm * SQM_TO_SQFT;
+  return price / areaSqft;
+}
 
-export function createColorScale(towns: TownInfo[]) {
-  const psfValues = towns.map(t => t.avgPsf).filter(v => v > 0);
-  
+
+function getMedian(values: number[]): number {
+  if (values.length === 0) return 0;
+
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+
+  if (sorted.length % 2 === 0) {
+    return (sorted[mid - 1] + sorted[mid]) / 2;
+  }
+
+  return sorted[mid];
+}
+
+
+function getAverage(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sum = values.reduce((acc, val) => acc + val, 0);
+  return sum / values.length;
+}
+
+
+function computeTownPrices(transactions: any[], baseTownInfo: TownInfo[]): TownPriceInfo[] {
+  // Group PSF values by town
+  const townPsfMap: Record<string, number[]> = {};
+
+  transactions.forEach(transaction => {
+    const town = transaction.town;
+    const psf = calculatePsfFromTransaction(transaction);
+
+    if (!townPsfMap[town]) {
+      townPsfMap[town] = [];
+    }
+    townPsfMap[town].push(psf);
+  });
+
+  // Calculate both metrics for each town
+  return baseTownInfo.map(town => {
+    const psfValues = townPsfMap[town.name] || [];
+
+    return {
+      ...town,
+      avgPsf: Math.round(getAverage(psfValues)),
+      medianPsf: Math.round(getMedian(psfValues)),
+      displayValue : 0,
+      transactionCount: psfValues.length
+    };
+  });
+}
+
+
+function createColorScale(towns: TownPriceInfo[], metric: PriceMetric): ColorScale {
+  const psfValues = towns
+    .map(t => metric === "avg" ? t.avgPsf : t.medianPsf)
+    .filter(v => v > 0);
+
   if (psfValues.length === 0) {
     return { getColor: () => NO_DATA_COLOR, min: 0, max: 0 };
   }
-  
+
   const min = Math.min(...psfValues);
   const max = Math.max(...psfValues);
 
-  const getColor = (avgPsf: number): string => {
-    if (avgPsf <= 0) return NO_DATA_COLOR;
-    
-    const normalized = (avgPsf - min) / (max - min);
+  const getColor = (psf: number): string => {
+    if (psf <= 0) return NO_DATA_COLOR;
+
+    const normalized = (psf - min) / (max - min);
     const index = Math.min(Math.floor(normalized * COLORS.length), COLORS.length - 1);
-    
+
     return COLORS[index];
   };
 
-  return { getColor, min, max, colors: COLORS };
+  return { getColor, min, max };
 }
+
+
+export const useTownStore = create<TownStoreState>((set, get) => ({
+  towns: initialTownInfo.map(town => ({
+    ...town,
+    avgPsf: 0,
+    medianPsf: 0,
+    displayValue: 0,
+    transactionCount: 0
+  })),
+  colorScale: null,
+  priceMetric: "avg",
+
+  setPriceMetric: (metric: PriceMetric) => {
+
+    const { towns } = get();
+    const colorScale = createColorScale(towns, metric);
+
+    // Update colors based on new metric
+    const townsWithColors = towns.map(town => ({
+      ...town,
+      displayValue : metric === "avg" ? town.avgPsf : town.medianPsf,
+      color: colorScale.getColor(metric === "avg" ? town.avgPsf : town.medianPsf)
+    }));
+
+    set({ priceMetric: metric, towns: townsWithColors, colorScale });
+  },
+
+  updateTownPrices: (filters?: TransactionFilters) => {
+    const { priceMetric } = get();
+    const transactions = filterTransactions(filters);
+    const towns = computeTownPrices(transactions, initialTownInfo);
+    const colorScale = createColorScale(towns, priceMetric);
+    const townsWithColors = towns.map(town  => ({
+      ...town,
+      displayValue : priceMetric === "avg" ? town.avgPsf : town.medianPsf,
+      color: colorScale.getColor(priceMetric === "avg" ? town.avgPsf : town.medianPsf)
+    }));
+    set({ towns: townsWithColors, colorScale });
+  }
+}));
