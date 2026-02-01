@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { getAveragePsfPerTown } from "../util/cruncher";
 
 
 export function useHDBSales() {
@@ -8,6 +9,10 @@ export function useHDBSales() {
   const url = "https://data.gov.sg/api/action/datastore_search?resource_id=" + datasetId;
   return useQuery({
     queryKey: ["hdb-sales"],
-    queryFn: () => fetch(url).then(r => calculatePsfAvg(r.json())),
+    queryFn: async () => {
+      const response = await fetch(url);
+      const data = await response.json();
+      return getAveragePsfPerTown(data.result.records);
+    },
   });
 }

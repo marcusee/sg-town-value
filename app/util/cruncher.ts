@@ -1,5 +1,4 @@
-
-// Define the ResaleRecord type if not imported elsewhere
+import { ResaleRecord } from "../types/resale";
 
 export function getAveragePsfPerTown(data: ResaleRecord[]) {
   const townStats: Record<string, { totalPsf: number; count: number }> = {};
