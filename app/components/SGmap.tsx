@@ -9,6 +9,7 @@ import FilterControl from "./FilterControl";
 const SGHeatMap: React.FC = () => {
   const {hoveredTownInfo, setHovered} = useHoverStore();
   const {towns} = useTownStore();
+  console.log("TOWNS", towns)
   return (
     <div className="w-full max-w-6xl mx-auto p-4 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold text-center mb-2 text-gray-800">

@@ -12,6 +12,5 @@ export type PriceMetric = "avg" | "median";
 export interface TownPriceInfo extends TownInfo {
   avgPsf: number;
   medianPsf: number;
-  displayValue: number;
   transactionCount: number;
 }

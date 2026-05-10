@@ -1,6 +1,13 @@
 import { ResaleRecord } from "../types/resale";
 import { TownInfo } from "../data/towndata";
-import { TownPriceInfo, TransactionFilters } from "../types/town";
+import { PriceMetric, TownPriceInfo, TransactionFilters } from "../types/town";
+import { COLORS, NO_DATA_COLOR } from "../data/heatMapColor";
+
+export interface ColorScale {
+  min: number;
+  max: number;
+  getColor: (psf: number) => string;
+}
 
 export const SQM_TO_SQFT = 10.7639;
 
@@ -57,8 +64,33 @@ export function computeTownPrices(transactions: ResaleRecord[], baseTownInfo: To
       ...town,
       avgPsf: Math.round(getAverage(psfValues)),
       medianPsf: Math.round(getMedian(psfValues)),
-      displayValue: 0,
       transactionCount: psfValues.length,
     };
   });
+}
+
+
+
+export function createColorScale(towns: TownPriceInfo[], metric: PriceMetric): ColorScale {
+  const psfValues = towns
+    .map(t => metric === "avg" ? t.avgPsf : t.medianPsf)
+    .filter(v => v > 0);
+
+  if (psfValues.length === 0) {
+    return { getColor: () => NO_DATA_COLOR, min: 0, max: 0 };
+  }
+
+  const min = Math.min(...psfValues);
+  const max = Math.max(...psfValues);
+
+  const getColor = (psf: number): string => {
+    if (psf <= 0) return NO_DATA_COLOR;
+
+    const normalized = (psf - min) / (max - min);
+    const index = Math.min(Math.floor(normalized * COLORS.length), COLORS.length - 1);
+
+    return COLORS[index];
+  };
+
+  return { getColor, min, max };
 }
