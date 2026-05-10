@@ -43,7 +43,7 @@ const initialTownInfo: TownInfo[] = [
     { id: "bishan", name: "BISHAN", x: 103.8497, y: 1.3505, avgPsf: 0, color: NO_DATA_COLOR , displayValue: 0,medianPsf: 0},
     { id: "central-area", name: "CENTRAL AREA", x: 103.8514, y: 1.2890, avgPsf: 0, color: NO_DATA_COLOR , displayValue: 0,medianPsf: 0},
     { id: "marine-parade", name: "MARINE PARADE", x: 103.9020, y: 1.3020, avgPsf: 0, color: NO_DATA_COLOR , displayValue: 0,medianPsf: 0},
-    { id: "bukit-timah", name: "BUKIT TIMAH", x: 103.7910, y: 1.3294, avgPsf: 0, color: NO_DATA_COLOR , displayValue: 0,medianPsf: 0,medianPsf: 0}
+    { id: "bukit-timah", name: "BUKIT TIMAH", x: 103.7910, y: 1.3294, avgPsf: 0, color: NO_DATA_COLOR , displayValue: 0,medianPsf: 0}
 ];
 
 
