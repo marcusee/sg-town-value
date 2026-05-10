@@ -14,7 +14,7 @@ import { useTownStore } from "../store/TownStore"
 import { AvgMedianToggle } from "./AvgMedianToggle"
 
 const FilterControl: React.FC = () => {
-  const [year, setYear] = useState<string>("2025")
+  const [year, setYear] = useState<string>(String(new Date().getFullYear()))
   const [floor, setFloor] = useState<string>("ALL")
   const [flatType, setFlatType] = useState<string>("ALL")
   const [commencement, setCommmence] = useState<string>("ALL")

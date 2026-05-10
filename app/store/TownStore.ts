@@ -64,13 +64,17 @@ export const useTownStore = create<TownStoreState>((set, get) => ({
     set({ isLoading: true });
      let data: ResaleRecord[] = [];
     try {
-
       data = await fetch(CONFIG.R2_HDB_DATA_URL).then(r => r.json());
     } catch (error) {
       console.error("Error fetching resale data:", error);
     }
     set({ resaleData: data, isLoading: false });
-    get().updateTownPrices();
+    get().updateTownPrices({
+      year: String(new Date().getFullYear()),
+      flatType: "ALL",
+      storyRange: "ALL",
+      commencement: "ALL"
+    });
   },
 
   towns: initialTownInfo.map(town => ({
