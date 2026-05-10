@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import {
   Select,
   SelectContent,
@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { yearOptions, storeyRangesOptions, flatTypesOptions, leaseCommenceOptions } from "../data/hdbOptions"
+import { yearOptions, getStoreyRangesOptions, getFlatTypesOptions, getLeaseCommenceOptions } from "../data/hdbOptions"
 import { useTownStore } from "../store/TownStore"
 import { AvgMedianToggle } from "./AvgMedianToggle"
 
@@ -19,7 +19,11 @@ const FilterControl: React.FC = () => {
   const [flatType, setFlatType] = useState<string>("ALL")
   const [commencement, setCommmence] = useState<string>("ALL")
 
-  const { updateTownPrices } = useTownStore();
+  const { updateTownPrices, resaleData } = useTownStore();
+
+  const flatTypesOptions = useMemo(() => getFlatTypesOptions(resaleData), [resaleData])
+  const storeyRangesOptions = useMemo(() => getStoreyRangesOptions(resaleData), [resaleData])
+  const leaseCommenceOptions = useMemo(() => getLeaseCommenceOptions(resaleData), [resaleData])
 
   const handleYearChange = (value: string) => {
     setYear(value)

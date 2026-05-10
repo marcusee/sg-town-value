@@ -1,5 +1,4 @@
 import { ResaleRecord } from "../types/resale";
-import { resaleData } from "./resaleData";
 export const ALL_OPTION = "ALL" as const
 
 function getUniqueSorted<T extends keyof ResaleRecord>(
@@ -18,29 +17,25 @@ function withAllOption(values: string[]): string[] {
   return [ALL_OPTION, ...values]
 }
 
-export const leaseCommenceOptions = withAllOption(
-  getUniqueSorted(
-    resaleData,
-    "lease_commence_date",
-    (a, b) => Number(a) - Number(b)
+export function getLeaseCommenceOptions(data: ResaleRecord[]): string[] {
+  return withAllOption(
+    getUniqueSorted(data, "lease_commence_date", (a, b) => Number(a) - Number(b))
   )
-)
+}
 
-export const flatTypesOptions = withAllOption(
-  getUniqueSorted(resaleData, "flat_type")
-)
+export function getFlatTypesOptions(data: ResaleRecord[]): string[] {
+  return withAllOption(getUniqueSorted(data, "flat_type"))
+}
 
-export const storeyRangesOptions = withAllOption(
-  getUniqueSorted(
-    resaleData,
-    "storey_range",
-    (a, b) => {
+export function getStoreyRangesOptions(data: ResaleRecord[]): string[] {
+  return withAllOption(
+    getUniqueSorted(data, "storey_range", (a, b) => {
       const aStart = Number(a.split(" TO ")[0])
       const bStart = Number(b.split(" TO ")[0])
       return aStart - bStart
-    }
+    })
   )
-)
+}
 
 // export const flatTypesOptions = [
 //   "ALL",

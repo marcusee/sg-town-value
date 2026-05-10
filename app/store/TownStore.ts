@@ -2,9 +2,9 @@
 
 import { create } from "zustand";
 import { initialTownInfo, TownInfo } from "../data/towndata";
-import { resaleData } from "../data/resaleData";
 import { COLORS, NO_DATA_COLOR } from "../data/heatMapColor";
 import { ResaleRecord } from "../types/resale";
+import { CONFIG } from "../config/config";
 
 
 interface ColorScale {
@@ -31,6 +31,9 @@ export interface TownPriceInfo extends TownInfo {
 }
 
 interface TownStoreState {
+  resaleData: ResaleRecord[];
+  isLoading: boolean;
+  fetchResaleData: () => Promise<void>;
   towns: TownPriceInfo[];
   colorScale: ColorScale | null;
   priceMetric: PriceMetric;
@@ -42,8 +45,8 @@ interface TownStoreState {
 const SQM_TO_SQFT = 10.7639;
 
 
-function filterTransactions(filters?: TransactionFilters): ResaleRecord[] {
-  let filtered = [...resaleData];
+function filterTransactions(data: ResaleRecord[], filters?: TransactionFilters): ResaleRecord[] {
+  let filtered = [...data];
   if (filters) {
     if (filters.year && filters.year !== "ALL") {
       filtered = filtered.filter(t => t.month.startsWith(filters.year));
@@ -149,6 +152,24 @@ function createColorScale(towns: TownPriceInfo[], metric: PriceMetric): ColorSca
 
 
 export const useTownStore = create<TownStoreState>((set, get) => ({
+  resaleData: [],
+  isLoading: false,
+
+  fetchResaleData: async () => {
+    const { resaleData, isLoading } = get();
+    if (resaleData.length > 0 || isLoading) return;
+    set({ isLoading: true });
+     let data: ResaleRecord[] = [];
+    try {
+
+      data = await fetch(CONFIG.R2_HDB_DATA_URL).then(r => r.json());
+    } catch (error) {
+      console.error("Error fetching resale data:", error);
+    }
+    set({ resaleData: data, isLoading: false });
+    get().updateTownPrices();
+  },
+
   towns: initialTownInfo.map(town => ({
     ...town,
     avgPsf: 0,
@@ -160,17 +181,13 @@ export const useTownStore = create<TownStoreState>((set, get) => ({
   priceMetric: "avg",
 
   setPriceMetric: (metric: PriceMetric) => {
-
     const { towns } = get();
     const colorScale = createColorScale(towns, metric);
-
-    // Update colors based on new metric
     const townsWithColors = towns.map(town => ({
       ...town,
-      displayValue : metric === "avg" ? town.avgPsf : town.medianPsf,
+      displayValue: metric === "avg" ? town.avgPsf : town.medianPsf,
       color: colorScale.getColor(metric === "avg" ? town.avgPsf : town.medianPsf)
     }));
-
     set({ priceMetric: metric, towns: townsWithColors, colorScale });
   },
 
@@ -178,13 +195,13 @@ export const useTownStore = create<TownStoreState>((set, get) => ({
     console.log("Updating town prices with filters:", filters);
     const start = performance.now();
 
-    const { priceMetric } = get();
-    const transactions = filterTransactions(filters);
+    const { priceMetric, resaleData } = get();
+    const transactions = filterTransactions(resaleData, filters);
     const towns = computeTownPrices(transactions, initialTownInfo);
     const colorScale = createColorScale(towns, priceMetric);
-    const townsWithColors = towns.map(town  => ({
+    const townsWithColors = towns.map(town => ({
       ...town,
-      displayValue : priceMetric === "avg" ? town.avgPsf : town.medianPsf,
+      displayValue: priceMetric === "avg" ? town.avgPsf : town.medianPsf,
       color: colorScale.getColor(priceMetric === "avg" ? town.avgPsf : town.medianPsf)
     }));
     console.log(`updateTownPrices: ${(performance.now() - start).toFixed(2)}ms`);

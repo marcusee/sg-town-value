@@ -1,8 +1,16 @@
 "use client"
 
+import { useEffect } from "react";
 import SGmap from "./components/SGmap";
+import { useTownStore } from "./store/TownStore";
 
 export default function Home() {
+  const fetchResaleData = useTownStore(s => s.fetchResaleData);
+
+  useEffect(() => {
+    fetchResaleData();
+  }, []);
+
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 py-12">
       {/* <Transactions /> */}
