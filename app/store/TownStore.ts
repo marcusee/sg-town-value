@@ -175,6 +175,9 @@ export const useTownStore = create<TownStoreState>((set, get) => ({
   },
 
   updateTownPrices: (filters?: TransactionFilters) => {
+    console.log("Updating town prices with filters:", filters);
+    const start = performance.now();
+
     const { priceMetric } = get();
     const transactions = filterTransactions(filters);
     const towns = computeTownPrices(transactions, initialTownInfo);
@@ -184,6 +187,8 @@ export const useTownStore = create<TownStoreState>((set, get) => ({
       displayValue : priceMetric === "avg" ? town.avgPsf : town.medianPsf,
       color: colorScale.getColor(priceMetric === "avg" ? town.avgPsf : town.medianPsf)
     }));
+    console.log(`updateTownPrices: ${(performance.now() - start).toFixed(2)}ms`);
+
     set({ towns: townsWithColors, colorScale });
   }
 }));

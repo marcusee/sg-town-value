@@ -1,0 +1,6 @@
+name = "sparkling-bread-47de"
+compatibility_date = "2025-05-10"
+
+[assets]
+directory = "./out"
+not_found_handling = "single-page-application"
