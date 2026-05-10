@@ -25,30 +25,32 @@ const FilterControl: React.FC = () => {
   const storeyRangesOptions = useMemo(() => getStoreyRangesOptions(resaleData), [resaleData])
   const leaseCommenceOptions = useMemo(() => getLeaseCommenceOptions(resaleData), [resaleData])
 
-  const handleYearChange = (value: string) => {
-    setYear(value)
-  }
-
-  const handleFloorChange = (value: string) => {
-    setFloor(value)
-  }
-
-  const handleFlatChange = (value: string) => {
-    setFlatType(value)
-  }
-
-  const handleCommencementChange = (value: string) => {
-    setCommmence(value)
-  }
-
-  useEffect(() => {
+  const updatePrices = (overrides: { year?: string; flatType?: string; floor?: string; commencement?: string } = {}) => {
+    const y  = overrides.year         ?? year;
+    const ft = overrides.flatType     ?? flatType;
+    const fl = overrides.floor        ?? floor;
+    const cm = overrides.commencement ?? commencement;
     updateTownPrices({
-      year: year,
-      flatType: flatType === "ALL" ? "" : flatType,
-      storyRange: floor === "ALL" ? "" : floor,
-      commencement: commencement === "ALL" ? "" : commencement
-    })
-  }, [year, floor, flatType, commencement])
+      year: y,
+      flatType: ft === "ALL" ? "" : ft,
+      storyRange: fl === "ALL" ? "" : fl,
+      commencement: cm === "ALL" ? "" : cm,
+    });
+  }
+
+  const handleYearChange         = (value: string) => { setYear(value);       updatePrices({ year: value }) }
+  const handleFloorChange        = (value: string) => { setFloor(value);      updatePrices({ floor: value }) }
+  const handleFlatChange         = (value: string) => { setFlatType(value);   updatePrices({ flatType: value }) }
+  const handleCommencementChange = (value: string) => { setCommmence(value);  updatePrices({ commencement: value }) }
+
+  // useEffect(() => {
+  //   updateTownPrices({
+  //     year: year,
+  //     flatType: flatType === "ALL" ? "" : flatType,
+  //     storyRange: floor === "ALL" ? "" : floor,
+  //     commencement: commencement === "ALL" ? "" : commencement
+  //   })
+  // }, [year, floor, flatType, commencement])
 
   return (
     <div className="flex flex-col gap-4 px-4">

@@ -41,21 +41,12 @@ export const useTownStore = create<TownStoreState>((set, get) => ({
     if (resaleData.length > 0 || isLoading) return;
     set({ isLoading: true });
      let data: ResaleRecord[] = [];
-     return;
     try {
-      // data = await fetch(CONFIG.R2_HDB_DATA_URL).then(r => r.json());
+      data = await fetch(CONFIG.R2_HDB_DATA_URL).then(r => r.json());
     } catch (error) {
       console.error("Error fetching resale data:", error);
     }
     set({ resaleData: data, isLoading: false });
-    if (data.length > 0) {
-      get().updateTownPrices({
-        year: String(new Date().getFullYear()),
-        flatType: "ALL",
-        storyRange: "ALL",
-        commencement: "ALL"
-      });
-    }
   },
   towns: initialTownInfo.map(town => ({
     ...town,
