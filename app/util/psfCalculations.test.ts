@@ -283,7 +283,6 @@ describe("computeTownPrices", () => {
     const result = computeTownPrices(transactions, townInfo);
     const bishan = result.find(t => t.name === "BISHAN")!;
     expect(bishan.avgPsf).toBeGreaterThan(bishan.medianPsf);
-    console.log(bishan.avgPsf)
     expect(bishan.avgPsf).toBe(737);
     expect(bishan.medianPsf).toBe(629);
 

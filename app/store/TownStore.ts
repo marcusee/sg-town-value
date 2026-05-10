@@ -50,7 +50,6 @@ export const useTownStore = create<TownStoreState>((set, get) => ({
   },
   towns: initialTownInfo.map(town => ({
     ...town,
-    medianPsf: 0,
     transactionCount: 0
   })),
   colorScale: null,

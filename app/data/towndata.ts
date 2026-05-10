@@ -8,15 +8,17 @@ export interface TownInfo {
   avgPsf: number;
   color: string;
   displayValue: number;
+  medianPsf: number;
 }
 
 export const initialTownInfo: TownInfo[] = [
   {
     "id": "sengkang",
-    "name": "SENGKANGG",
+    "name": "SENGKANG",
     "x": 103.8951,
     "y": 1.3911,
     "avgPsf": 650,
+    "medianPsf": 636,
     "color": "#bef264",
     "displayValue": 650
   },
@@ -26,6 +28,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.9065,
     "y": 1.4055,
     "avgPsf": 691,
+    "medianPsf": 697,
     "color": "#fde047",
     "displayValue": 691
   },
@@ -35,6 +38,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.7865,
     "y": 1.436,
     "avgPsf": 541,
+    "medianPsf": 524,
     "color": "#7dd3fc",
     "displayValue": 541
   },
@@ -44,6 +48,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.8354,
     "y": 1.4297,
     "avgPsf": 574,
+    "medianPsf": 571,
     "color": "#67e8f9",
     "displayValue": 574
   },
@@ -53,6 +58,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.9454,
     "y": 1.3536,
     "avgPsf": 658,
+    "medianPsf": 622,
     "color": "#bef264",
     "displayValue": 658
   },
@@ -62,6 +68,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.7038,
     "y": 1.3527,
     "avgPsf": 531,
+    "medianPsf": 521,
     "color": "#7dd3fc",
     "displayValue": 531
   },
@@ -71,6 +78,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.9294,
     "y": 1.3236,
     "avgPsf": 628,
+    "medianPsf": 587,
     "color": "#86efac",
     "displayValue": 628
   },
@@ -80,6 +88,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.887,
     "y": 1.3736,
     "avgPsf": 621,
+    "medianPsf": 601,
     "color": "#86efac",
     "displayValue": 621
   },
@@ -89,6 +98,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.7445,
     "y": 1.3856,
     "avgPsf": 532,
+    "medianPsf": 516,
     "color": "#7dd3fc",
     "displayValue": 532
   },
@@ -98,6 +108,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.749,
     "y": 1.3496,
     "avgPsf": 639,
+    "medianPsf": 649,
     "color": "#86efac",
     "displayValue": 639
   },
@@ -107,6 +118,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.8493,
     "y": 1.3691,
     "avgPsf": 697,
+    "medianPsf": 596,
     "color": "#fde047",
     "displayValue": 697
   },
@@ -116,6 +128,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.819,
     "y": 1.2819,
     "avgPsf": 800,
+    "medianPsf": 760,
     "color": "#fb923c",
     "displayValue": 800
   },
@@ -125,6 +138,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.7661,
     "y": 1.378,
     "avgPsf": 581,
+    "medianPsf": 566,
     "color": "#67e8f9",
     "displayValue": 581
   },
@@ -134,6 +148,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.8463,
     "y": 1.3341,
     "avgPsf": 782,
+    "medianPsf": 709,
     "color": "#fbbf24",
     "displayValue": 782
   },
@@ -143,6 +158,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.8667,
     "y": 1.319,
     "avgPsf": 801,
+    "medianPsf": 749,
     "color": "#fb923c",
     "displayValue": 801
   },
@@ -152,6 +168,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.8198,
     "y": 1.4432,
     "avgPsf": 628,
+    "medianPsf": 616,
     "color": "#86efac",
     "displayValue": 628
   },
@@ -161,6 +178,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.9646,
     "y": 1.372,
     "avgPsf": 591,
+    "medianPsf": 561,
     "color": "#67e8f9",
     "displayValue": 591
   },
@@ -170,6 +188,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.806,
     "y": 1.294,
     "avgPsf": 913,
+    "medianPsf": 988,
     "color": "#ef4444",
     "displayValue": 913
   },
@@ -179,6 +198,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.892,
     "y": 1.318,
     "avgPsf": 705,
+    "medianPsf": 641,
     "color": "#fde047",
     "displayValue": 705
   },
@@ -188,6 +208,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.7702,
     "y": 1.3151,
     "avgPsf": 750,
+    "medianPsf": 632,
     "color": "#fcd34d",
     "displayValue": 750
   },
@@ -197,6 +218,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.7396,
     "y": 1.3331,
     "avgPsf": 556,
+    "medianPsf": 547,
     "color": "#7dd3fc",
     "displayValue": 556
   },
@@ -206,6 +228,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.873,
     "y": 1.3541,
     "avgPsf": 670,
+    "medianPsf": 653,
     "color": "#bef264",
     "displayValue": 670
   },
@@ -215,6 +238,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.8497,
     "y": 1.3505,
     "avgPsf": 750,
+    "medianPsf": 735,
     "color": "#fcd34d",
     "displayValue": 750
   },
@@ -224,6 +248,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.8514,
     "y": 1.289,
     "avgPsf": 913,
+    "medianPsf": 814,
     "color": "#ef4444",
     "displayValue": 913
   },
@@ -233,6 +258,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.902,
     "y": 1.302,
     "avgPsf": 676,
+    "medianPsf": 672,
     "color": "#bef264",
     "displayValue": 676
   },
@@ -242,6 +268,7 @@ export const initialTownInfo: TownInfo[] = [
     "x": 103.791,
     "y": 1.3294,
     "avgPsf": 805,
+    "medianPsf": 843,
     "color": "#fb923c",
     "displayValue": 805
   }
